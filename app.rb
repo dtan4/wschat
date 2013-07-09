@@ -7,4 +7,8 @@ class MyApp < Sinatra::Base
   get '/' do
     slim :index
   end
+
+  get '/application.js' do
+    coffee :application
+  end
 end
