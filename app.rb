@@ -4,13 +4,17 @@ class SinatraApp < Sinatra::Base
     register Sinatra::Reloader
   end
 
+  configure do
+    set :server, 'thin'
+    set :sockets, []
+  end
+
   get '/' do
     if !request.websocket?
       slim :index
     else
       request.websocket do |ws|
         ws.onopen do
-          ws.send("Hello, world!")
           settings.sockets << ws
         end
 
@@ -26,7 +30,7 @@ class SinatraApp < Sinatra::Base
     end
   end
 
-  get '/application.js' do
-    coffee :application
+  get '/wschat.js' do
+    coffee :wschat
   end
 end
