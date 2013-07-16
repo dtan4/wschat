@@ -29,5 +29,4 @@ $ ->
             message: input_msg.val()
 
         ws.send JSON.stringify data
-        input_id.val ''
         input_msg.val ''

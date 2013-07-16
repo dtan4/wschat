@@ -1,3 +1,5 @@
+require 'json'
+
 class SinatraApp < Sinatra::Base
   configure :development do
     Bundler.require :development
@@ -7,6 +9,7 @@ class SinatraApp < Sinatra::Base
   configure do
     set :server, 'thin'
     set :sockets, []
+    set :messages, []
   end
 
   get '/' do
@@ -16,9 +19,13 @@ class SinatraApp < Sinatra::Base
       request.websocket do |ws|
         ws.onopen do
           settings.sockets << ws
+
+          settings.messages.each { |msg| ws.send(JSON.generate(msg)) }
         end
 
         ws.onmessage do |msg|
+          json = JSON.parse(msg)
+          settings.messages << json
           EventMachine.next_tick { settings.sockets.each { |s| s.send(msg) } }
         end
 
